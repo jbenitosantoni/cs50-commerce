@@ -155,3 +155,12 @@ def comment(request, auction):
     auction_object = Auction.objects.get(pk=auction)
     Comment(comment=request.POST["comment"], auction=auction_object, user=user).save()
     return list_auction(request, auction)
+
+
+def watchlist(request):
+    if not request.user.is_authenticated:
+        return index(request)
+    watchlist = WatchList.objects.filter(user_id=request.user.id)
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": watchlist
+    })
