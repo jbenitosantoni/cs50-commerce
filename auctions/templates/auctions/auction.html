@@ -1,0 +1,46 @@
+{% extends "auctions/layout.html" %}
+{% debug %}
+{% block body %}
+    {% if error != None %}
+        <h3 style="color: red; text-align: center">{{ error }}</h3>
+    {% endif %}
+    {% if auction.dateFinish != None %}
+        <h3 style="color: red; text-align: center">Auction is Closed</h3>
+        {% if user.id == last_bid.user_id %}
+            <h3 style="color: red; text-align: center">You are the Winner</h3>
+        {% endif %}
+    {% endif %}
+    <div style="text-align: center">
+            <div class="card mx-auto" style="max-width: 540px; align: center" id="card-listings">
+                <ul class="list-group list-group-flush ">
+                    <li class="list-group-item">
+                    {% if user.is_authenticated %}
+                        {% if watchlist %}
+                            <a href="{% url 'remove_watchlist' auction.id %}">Remove from Watchlist</a>
+                        {% else %}
+                            <a href="{% url 'add_watchlist' auction.id %}">Add to Watchlist</a>
+                        {% endif %}
+                    {% endif %}
+                        <h3>{{ auction.name }}</h3>
+                        <p>{{ auction.description }}</p>
+                        <p>{{ last_bid.price }} €</p>
+                        {% if auction.photo %}<img src="{{ auction.photo }}"> {% endif %}
+                        {% if auction.category %}<p>{{ auction.category }}</p>{% endif %}
+                    {% if user.is_authenticated and user.id != auction.user_id and auction.dateFinish == None %}
+                        <form method="post" action="{% url 'bid' auction.id %}">{% csrf_token %}
+                        <div>
+                            <input type="number" step='0.01' value='0.00' placeholder='0.00' name="price" required>
+                        </div>
+                        <input type="submit" value="Bid">
+                        </form>
+                    {% endif %}
+                    {% if user.is_authenticated and user.id == auction.user_id and auction.dateFinish == None%}
+                        <form method="get" action="{% url 'close' auction.id %}">{% csrf_token %}
+                        <input type="submit" value="Close">
+                        </form>
+                    {% endif %}
+                    </li>
+                </ul>
+            </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "auctions/layout.html" %}
+{% debug %}
+{% block body %}
+    <div style="text-align: center">
+        <h2>Active Listings</h2>
+        {% for auction in auctions %}
+            <div class="card mx-auto" style="max-width: 540px; align: center" id="card-listings">
+                <ul class="list-group list-group-flush ">
+                    <li class="list-group-item">
+                        <a href="{% url 'auction' auction.id %}"><h3>{{ auction.name }}</h3></a>
+                        <p>{{ auction.description }}</p>
+                        <p>{{ auction.price }}</p>
+                        {% if auction.photo %}<img src="{{ auction.photo }}"> {% endif %}
+                        {% if auction.category %}<p>{{ auction.category }}</p>{% endif %}
+                    </li>
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
