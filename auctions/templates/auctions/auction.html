@@ -41,6 +41,39 @@
                     {% endif %}
                     </li>
                 </ul>
+            <div class="container mx-auto">
+                <div class="row bootstrap snippets bootdeys">
+                    <div class="col-md-8 col-sm-12">
+                        <div class="comment-wrapper">
+                            <div class="panel panel-info">
+                                <div class="panel-body">
+                                {% if user.is_authenticated and user.id == auction.user_id and auction.dateFinish == None%}
+                                    <form method="post" action="{% url 'comment' auction.id %}">{% csrf_token %}
+                                        <textarea class="form-control" placeholder="write a comment..." rows="3" name="comment"></textarea>
+                                        <br>
+                                        <input type="submit" class="btn btn-info pull-right" value="Post"></input>
+                                    </form>
+                                {% endif %}
+                                    <hr>
+                                    <ul class="media-list">
+                                        {% for comment in comments %}
+                                            <li class="media">
+                                                <a href="#" class="pull-left">
+                                                    <img src="https://bootdey.com/img/Content/user_1.jpg" alt="" class="img-circle">
+                                                </a>
+                                                <div class="media-body">
+                                                    <p>{{ comment.comment }}</p>
+                                                </div>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
             </div>
     </div>
 {% endblock %}

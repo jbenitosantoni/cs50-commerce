@@ -96,6 +96,10 @@ def list_auction(request, auction, error=None):
     user = User.objects.get(pk=request.user.id)
     last_bid = util.get_last_bid(auction)
     try:
+        comments = Comment.objects.filter(auction=auction)
+    except:
+        comments = None
+    try:
         watchlist = WatchList.objects.get(auction_id=auction.id, user_id=user.id)
     except:
         watchlist = None
@@ -103,7 +107,8 @@ def list_auction(request, auction, error=None):
         "auction": auction,
         "watchlist": watchlist,
         "last_bid": last_bid,
-        "error": error
+        "error": error,
+        "comments": comments
     })
 
 
@@ -141,3 +146,12 @@ def close(request, auction):
     if auction_object.user_id == request.user.id:
         Auction.objects.filter(pk=auction).update(dateFinish=datetime.datetime.now())
         return list_auction(request, auction)
+
+
+def comment(request, auction):
+    if not request.user.is_authenticated:
+        return list_auction(request, auction, "You must be logged")
+    user = User.objects.get(pk=request.user.id)
+    auction_object = Auction.objects.get(pk=auction)
+    Comment(comment=request.POST["comment"], auction=auction_object, user=user).save()
+    return list_auction(request, auction)
